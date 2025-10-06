@@ -1,6 +1,5 @@
 package com.marcosfelipe.usuario.infrastructure.security;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,19 +18,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@SecurityScheme(name = SecurityConfig.SECURITY_SCHEME, type = SecuritySchemeType.HTTP,
-        bearerFormat = "JWT", scheme = "bearer")
 public class SecurityConfig {
 
-    public static final String SECURITY_SCHEME = "bearerAuth";
-
     // Instâncias de JwtUtil e UserDetailsService injetadas pelo Spring
-    private final com.marcosfelipe.usuario.infrastructure.security.JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
 
     // Construtor para injeção de dependências de JwtUtil e UserDetailsService
     @Autowired
-    public SecurityConfig(com.marcosfelipe.usuario.infrastructure.security.JwtUtil jwtUtil, UserDetailsService userDetailsService) {
+    public SecurityConfig(JwtUtil jwtUtil, UserDetailsService userDetailsService) {
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
     }
@@ -39,23 +34,24 @@ public class SecurityConfig {
     // Configuração do filtro de segurança
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        com.marcosfelipe.usuario.infrastructure.security.JwtRequestFilter jwtRequestFilter = new com.javanauta.usuario.infrastructure.security.JwtRequestFilter(jwtUtil, userDetailsService);
+        // Cria uma instância do JwtRequestFilter com JwtUtil e UserDetailsService
+        JwtRequestFilter jwtRequestFilter = new JwtRequestFilter(jwtUtil, userDetailsService);
 
         http
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable) // Desativa proteção CSRF para APIs REST (não aplicável a APIs que não mantêm estado)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/usuario").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/usuario/login").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/usuario/endereco/**").permitAll()
-                        .requestMatchers("/usuario/**").authenticated()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/usuario/login").permitAll() // Permite acesso ao endpoint de login sem autenticação
+                        .requestMatchers(HttpMethod.GET, "/auth").permitAll()// Permite acesso ao endpoint GET /auth sem autenticação
+                        .requestMatchers(HttpMethod.POST, "/usuario").permitAll() // Permite acesso ao endpoint POST /usuario sem autenticação
+                        .requestMatchers("/usuario/**").authenticated() // Requer autenticação para qualquer endpoint que comece com /usuario/
+                        .anyRequest().authenticated() // Requer autenticação para todas as outras requisições
                 )
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Configura a política de sessão como stateless (sem sessão)
                 )
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class); // Adiciona o filtro JWT antes do filtro de autenticação padrão
 
+        // Retorna a configuração do filtro de segurança construída
         return http.build();
     }
 
