@@ -24,10 +24,10 @@ public class UsuarioService {
     private final EnderecoRepository enderecoRepository;
     private final TelefoneRepository telefoneRepository;
 
-    public UsuarioDTO salvaUsuario(UsuarioDTO usuarioDTO){
-        emailExiste(usuarioDTO.getEmail());
-        usuarioDTO.setSenha(passwordEncoder.encode(usuarioDTO.getSenha()));
+    public UsuarioDTO salvaUsuario(UsuarioDTO usuarioDTO) {
         Usuario usuario = usuarioConverter.paraUsuario(usuarioDTO);
-        return usuarioConverter.paraUsuarioDTO(usuarioRepository.save(usuario)
+        return usuarioConverter.paraUsuarioDTO(
+                usuarioRepository.save(usuario)
         );
     }
+}
