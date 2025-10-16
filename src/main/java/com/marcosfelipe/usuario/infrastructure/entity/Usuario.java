@@ -1,4 +1,4 @@
-package com.javanauta.usuario.infrastructure.entity;
+package com.marcosfelipe.usuario.infrastructure.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

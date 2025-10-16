@@ -1,7 +1,8 @@
 package com.marcosfelipe.usuario.infrastructure.repository;
 
 
-import com.javanauta.usuario.infrastructure.entity.Telefone;
+
+import com.marcosfelipe.usuario.infrastructure.entity.Telefone;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
