@@ -8,6 +8,7 @@ import com.marcosfelipe.usuario.infrastructure.entity.Telefone;
 import com.marcosfelipe.usuario.infrastructure.entity.Usuario;
 import org.springframework.stereotype.Component;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,12 +100,4 @@ public class UsuarioConverter {
                 .ddd(telefone.getDdd())
                 .build();
     }
-
-    public Usuario updateUsuario(UsuarioDTO, Usuario entity){
-    return Usuario.builder()
-            .nome(paraUsuarioDTO().getNome())
-            .build();
-    }
 }
-
-

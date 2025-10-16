@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class usuarioController {
 
+    private final UsuarioService usuarioService;
+
     @PostMapping
-    public ResponseEntity<UsuarioDTO>salvarUsuario(@RequestBody UsuarioDTO usuarioDTO){
-        return ResponseEntity.ok(UsuarioService.salvaUsuario(usuarioDTO));
+   public ResponseEntity<UsuarioDTO> salvaUsuario(@RequestBody UsuarioDTO usuarioDTO){
+        return ResponseEntity.ok(usuarioService.salvaUsuario(usuarioDTO));
     }
 
 }
